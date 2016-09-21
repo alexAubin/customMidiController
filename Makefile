@@ -146,8 +146,8 @@ bootloader-flash:
 	@echo " Attempting to flash bootloader using Arduino as in-situ programmer (AVRisp)..."
 	@echo "#######################"
 	@echo " "
-	$(MAKE) -C bootloader fuse  PROGRAMMER='-c avrisp -P `ls /dev/ttyACM*` -b $(UPLOAD_SPEED)' LOCKOPT='-U lock:w:0xcf:m'
-	$(MAKE) -C bootloader flash PROGRAMMER='-c avrisp -P `ls /dev/ttyACM*` -b $(UPLOAD_SPEED)' LOCKOPT='-U lock:w:0xcf:m'
+	$(MAKE) -C bootloader fuse  DEVICE=$(BOARD_BUILD_MCU) PROGRAMMER='-c avrisp -P `ls /dev/ttyACM*` -b $(UPLOAD_SPEED)' LOCKOPT='-U lock:w:0xcf:m'
+	$(MAKE) -C bootloader flash DEVICE=$(BOARD_BUILD_MCU) PROGRAMMER='-c avrisp -P `ls /dev/ttyACM*` -b $(UPLOAD_SPEED)' LOCKOPT='-U lock:w:0xcf:m'
 
 ###############################################################################
 # Building rules

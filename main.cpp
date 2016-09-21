@@ -21,6 +21,8 @@ void loop()
 
     midiController.update();
 
+    delay(10);
+
 }
 
 
