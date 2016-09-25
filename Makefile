@@ -78,7 +78,7 @@ ARDUINOLIBOBJS := $(foreach dir, $(ARDUINOCOREDIR) $(ARDUINOLIBLIBSPATH), \
 
 # Flags
 
-OPTIMIZATION := -O2
+OPTIMIZATION := -O1
 CPPFLAGS := $(OPTIMIZATION) -Wall -fno-exceptions -ffunction-sections -fdata-sections
 CPPFLAGS += -funsigned-char -funsigned-bitfields -fpack-struct -fshort-enums
 CPPFLAGS += -mmcu=$(BOARD_BUILD_MCU)

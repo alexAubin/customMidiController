@@ -64,10 +64,11 @@ How to build your MIDI Controller ?
 - Stripper ;
 - Some scissors or small cutters to cut wires after soldering ;
 - Ideally, a multimeter - or at least to check there's no short between GND and 5V !
+- A small knife if you need to remove the chip from the support.
 
 ### Optional (if you aim to control more than 6 analog entries, i.e. potentiometers) :
 
-- ? x Analogic multiplexer              ([Product on Farnell](http://fr.farnell.com/webapp/wcs/stores/servlet/Search?mfpn=1236279))
+- ? x 1-to-8 analog multiplexer         ([Product on Farnell](http://fr.farnell.com/webapp/wcs/stores/servlet/Search?mfpn=1236279))
 - ? x Socket for 16 pin chip            ([Product on Farnell]) Optionnal, but recommended
 
 3. Making a USB cable
@@ -101,6 +102,9 @@ How to build your MIDI Controller ?
 
 8. Put all this in a nice case
 ------------------------------
+
+[MakerCase](http://www.makercase.com/)
+
 
 9. Profit !
 -----------

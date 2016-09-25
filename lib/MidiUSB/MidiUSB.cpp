@@ -276,25 +276,36 @@ int MIDIController::initUSB()
 
 void MIDIController::mapPinToNote(int pinNumber, char noteValue)
 {
-    elementPin[numberOfElements] = pinNumber;
-    elementFunction[numberOfElements] = NOTE;
-    elementFunctionParameter[numberOfElements] = noteValue;
-    elementLastState[numberOfElements] = 0;
-    elementDebounceCount[numberOfElements] = 0;
-    elementStatus[numberOfElements] = UP_TO_DATE;
-    numberOfElements++;
+    initElement(pinNumber, NOTE, noteValue);
+};
+
+void MIDIController::mapPinToNote(Multiplexer* mux, int pinNumber, char noteValue)
+{
+    initElement(pinNumber, NOTE, noteValue, mux);
 };
 
 void MIDIController::mapPinToControl(int pinNumber, char controlId)
 {
+    initElement(pinNumber, CONTROL, controlId);
+};
+
+void MIDIController::mapPinToControl(Multiplexer* mux, int pinNumber, char controlId)
+{
+    initElement(pinNumber, CONTROL, controlId, mux);
+};
+
+void MIDIController::initElement(int pinNumber, char function, char functionParameter, Multiplexer* mux)
+{
     elementPin[numberOfElements] = pinNumber;
-    elementFunction[numberOfElements] = CONTROL;
-    elementFunctionParameter[numberOfElements] = controlId;
+    elementFunction[numberOfElements] = function;
+    elementFunctionParameter[numberOfElements] = functionParameter;
     elementLastState[numberOfElements] = 0;
     elementDebounceCount[numberOfElements] = 0;
     elementStatus[numberOfElements] = UP_TO_DATE;
+    elementMux[numberOfElements] = mux;
     numberOfElements++;
 };
+
 
 void MIDIController::update()
 {
@@ -329,21 +340,41 @@ void MIDIController::readElement(int i)
     int  pin          = elementPin[i];
     char currentValue = -1;
     char oldValue     = elementLastState[i];
+    Multiplexer* mux  = elementMux[i];
+    char changeDetected = 0;
+
     switch(elementFunction[i])
     {
         case NOTE :
         {
-            currentValue = digitalRead(pin);
+            if (mux) currentValue = digitalRead(mux->getPin());
+            else     currentValue = digitalRead(pin);
+            if (currentValue != oldValue) changeDetected = 1;
             break;
         }
         case CONTROL :
         {
-            currentValue = analogRead(pin);
+            if (mux)
+            {
+                mux->select(pin);
+                delay(1);
+                currentValue = analogRead(mux->getPin()) / 4;
+                delay(1);
+            }
+            else
+            {
+                delay(1);
+                currentValue = analogRead(pin) / 4;
+                delay(1);
+            }
+
+            if (abs(currentValue - oldValue) > 1) changeDetected = 1;
+
             break;
         }
     }
 
-    if (currentValue != oldValue)
+    if (changeDetected != 0)
     {
         elementLastState[i] = currentValue;
         elementStatus[i] = TO_BE_UPDATED;
