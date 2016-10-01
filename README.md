@@ -30,6 +30,8 @@ How to build your MIDI Controller ?
 1. General overview
 -------------------
 
+
+
 2. Shopping for hardware
 ------------------------
 
@@ -60,7 +62,7 @@ How to build your MIDI Controller ?
 
 ### Tools
 
-- Soldering iron ;
+- Soldering iron (+solder material) ;
 - Stripper ;
 - Some scissors or small cutters to cut wires after soldering ;
 - Ideally, a multimeter - or at least to check there's no short between GND and 5V !
@@ -76,7 +78,7 @@ How to build your MIDI Controller ?
 
 ![](./doc/USBpinning.png)
 
-![](./hardware/USBcableIRL.jpg)
+![](./hardware/usbCableIRL.jpg)
 
 4. Building the core (standalone Atmega on USB)
 -----------------------------------------------
@@ -91,6 +93,21 @@ How to build your MIDI Controller ?
 
 5. Flashing the USBasp/V-USB bootloader
 ---------------------------------------
+
+For the ATMEGA to be able to communicate directly through the USB (allowing it
+to be recognized as a USB device and to reprogram it at will), we use a custom
+bootloader from V-USB. The bootloader is the small piece of software, pretty
+similar to the BIOS in computer, which initiates the rest of the software meant
+to be run. 
+
+In our case, if the "bootloader switch" is activated when the ATMEGA boot, it will
+emulate a "USBasp" programmer and you'll be able to upload to change the program. 
+If the "bootloader switch" is in the other position, the bootloader will launch
+the program you uploaded on the ATMEGA - which can be as simple as blinking a LED,
+or acting as a USB device (mouse, keyboard, MIDI, ...).
+
+Flashing the bootloader have to be done once and for all and require a
+particular setup described below :
 
 ![](./doc/bootloaderFlashingSetup.png)
 
