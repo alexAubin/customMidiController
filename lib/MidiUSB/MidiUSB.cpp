@@ -358,13 +358,13 @@ void MIDIController::readElement(int i)
             {
                 mux->select(pin);
                 delay(1);
-                currentValue = analogRead(mux->getPin()) / 4;
+                currentValue = analogRead(mux->getPin()) / 8;
                 delay(1);
             }
             else
             {
                 delay(1);
-                currentValue = analogRead(pin) / 4;
+                currentValue = analogRead(pin) / 8;
                 delay(1);
             }
 

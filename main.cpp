@@ -14,10 +14,14 @@ void setup()
 
     midiController.initUSB();
     //midiController.mapPinToNote(12,60);
-    midiController.mapPinToControl(&mux1, 0, 1);
-    midiController.mapPinToControl(&mux1, 1, 2);
-    midiController.mapPinToControl(&mux1, 2, 3);
-    midiController.mapPinToControl(&mux1, 3, 4);
+    midiController.mapPinToControl(&mux1, 0, 0);
+    midiController.mapPinToControl(&mux1, 1, 1);
+    midiController.mapPinToControl(&mux1, 2, 2);
+    midiController.mapPinToControl(&mux1, 3, 3);
+    midiController.mapPinToControl(&mux1, 4, 4);
+    midiController.mapPinToControl(&mux1, 5, 5);
+    midiController.mapPinToControl(&mux1, 6, 6);
+    midiController.mapPinToControl(&mux1, 7, 7);
 
 }
 
