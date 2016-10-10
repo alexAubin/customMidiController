@@ -30,7 +30,7 @@ How to build your MIDI Controller ?
 1. General overview
 -------------------
 
-![](./hardware/overview.png)
+![](./doc/overview.png)
 
 2. Shopping for hardware
 ------------------------
