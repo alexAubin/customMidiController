@@ -30,6 +30,22 @@ How to build your MIDI Controller ?
 1. General overview
 -------------------
 
+The general architecture is shown below. The core of the controller is an Atmega
+chip. A special bootloader is used to allow the chip to be reprogrammed directly
+through USB. The user program can also communicate with the computer directly 
+through USB, and actually be recognized as any USB device you would like,
+including HID (Human Interface Device), and in our case, a MIDI controller. You
+can then interface your controller with any music software speaking MIDI.
+
+On the Atmega chip, potentiometers and switches can be connected, and mapped in 
+the software to generate corresponding MIDI signals (control, notes, play/pause, 
+...). 
+
+Note that the Atmega alone accepts only 6 analog entries (i.e. needed to interface 
+potentiometers). However it is relatively simple to add one or several
+multiplexers to extend the capabilities (8 entries mapped to 1 entry, i.e. up to 
+48 analog entries).
+
 ![](./doc/overview.png)
 
 2. Shopping for hardware
@@ -37,44 +53,63 @@ How to build your MIDI Controller ?
 
 ### The core
 
-- 1 x Atmega328P-PU                ([Product on Farnell](http://fr.farnell.com/webapp/wcs/stores/servlet/Search?mfpn=1715487) Careful : need *exactly* ths 328**P-PU**
-- 1 x Socket for 28 pin chip       ([Product on Farnell]) Optionnal, but recommended
-- 1 x USB connector                ([Product on Farnell](http://fr.farnell.com/webapp/wcs/stores/servlet/Search?mfpn=1696544)) (or an old USB cable with male plug, to be cut to access the wires)
-- 1 x 12MHz crystal                ([Product on Farnell](http://fr.farnell.com/webapp/wcs/stores/servlet/Search?mfpn=2508453))
-- 2 x 3.6V zener diode             ([Product on Farnell](http://fr.farnell.com/webapp/wcs/stores/servlet/Search?mfpn=1861480))
-- 2 x 22pF ceramic capacitor       ([Product on Farnell](http://fr.farnell.com/webapp/wcs/stores/servlet/Search?mfpn=9411674))
-- 1 x 100nF ceramic capacitor      ([Product on Farnell](http://fr.farnell.com/webapp/wcs/stores/servlet/Search?mfpn=9411887))
-- 1 x 4.7μF electrolytic capacitor ([Product on Farnell](http://fr.farnell.com/webapp/wcs/stores/servlet/Search?mfpn=9451471))
-- 1 x 1.5kΩ resistor               ([Product on Farnell](http://fr.farnell.com/webapp/wcs/stores/servlet/Search?mfpn=)) TODO (or 1k, 2k ...)
-- 2 x 68Ω resistor                 ([Product on Farnell](http://fr.farnell.com/webapp/wcs/stores/servlet/Search?mfpn=)) TODO
-- 2 x mini push button switch      ([Product on Farnell](http://fr.farnell.com/webapp/wcs/stores/servlet/Search?mfpn=)) TODO
-- Colored wires                    such as [this](http://www.robotshop.com/eu/en/elenco-22-gauge-black-25-ft.html), or any cable you can find. Just don't use fancy jumper wires if you intend to solder !
-- Single-sided prototyping board   ([example](http://www.robotshop.com/eu/en/prototyping-board.html))
+- 1 x Atmega328P-PU                ([Product on Farnell](http://fr.farnell.com/webapp/wcs/stores/servlet/Search?exaMfpn=true&mfpn=1715487)) Careful : need *exactly* the 328**P-PU** version
+- 1 x Socket for 28 pin chip       ([Product on Farnell](http://fr.farnell.com/webapp/wcs/stores/servlet/Search?exaMfpn=true&mfpn=2445626)) Optionnal, but recommended
+- 1 x USB connector                ([Product on Farnell](http://fr.farnell.com/webapp/wcs/stores/servlet/Search?exaMfpn=true&mfpn=1696544)) (or an old USB cable with male plug, to be cut to access the wires)
+- 1 x 12MHz crystal                ([Product on Farnell](http://fr.farnell.com/webapp/wcs/stores/servlet/Search?exaMfpn=true&mfpn=2508453))
+- 2 x 3.6V zener diode             ([Example on Farnell](http://fr.farnell.com/webapp/wcs/stores/servlet/Search?exaMfpn=true&mfpn=1861480))
+- 2 x 22pF ceramic capacitor       ([Example on Farnell](http://fr.farnell.com/webapp/wcs/stores/servlet/Search?exaMfpn=true&mfpn=9411674))
+- 1 x 100nF ceramic capacitor      ([Example on Farnell](http://fr.farnell.com/webapp/wcs/stores/servlet/Search?exaMfpn=true&mfpn=9411887))
+- 1 x 4.7μF electrolytic capacitor ([Example on Farnell](http://fr.farnell.com/webapp/wcs/stores/servlet/Search?exaMfpn=true&mfpn=9451471))
+- 1 x 10~50kΩ resistor             ([Example on Farnell](http://fr.farnell.com/webapp/wcs/stores/servlet/Search?exaMfpn=true&mfpn=1565338)) (these are pretty expensive, you'd be better off buying directly a set of various resistors)
+- 1 x 1~2kΩ resistor               ([Example on Farnell](http://fr.farnell.com/webapp/wcs/stores/servlet/Search?exaMfpn=true&mfpn=1565355))
+- 2 x 68Ω resistor                 ([Example on Farnell](http://fr.farnell.com/webapp/wcs/stores/servlet/Search?exaMfpn=true&mfpn=1565407))
+- 1 x mini push button switch      ([Example on Farnell](http://fr.farnell.com/webapp/wcs/stores/servlet/Search?exaMfpn=true&mfpn=2468762))
+- 1 x mini toggle switch           ([Example on Farnell](http://fr.farnell.com/webapp/wcs/stores/servlet/Search?exaMfpn=true&mfpn=2320018))
+
+- Colored wires                    ([Example](http://www.robotshop.com/eu/en/elenco-22-gauge-black-25-ft.html), or any cable you can find. Just don't use fancy jumper wires if you intend to solder !)
+- Single-sided prototyping board   ([Example](http://www.robotshop.com/eu/en/prototyping-board.html)) or a breadboard if you don't want to solder right away
 
 ### Actual controller stuff
 
-- ? x On/off switches                   ([Product on Farnell](http://fr.farnell.com/webapp/wcs/stores/servlet/Search?mfpn=)) TODO
-- ? x Push-button / keys                ([Product on Farnell](http://fr.farnell.com/webapp/wcs/stores/servlet/Search?mfpn=)) TODO
-- ? x Rotatory potentiometers           ([Product on Farnell](http://fr.farnell.com/webapp/wcs/stores/servlet/Search?mfpn=1760794))
-- ? x Knob for rotatory potentiometers  ([Product on Farnell](http://fr.farnell.com/webapp/wcs/stores/servlet/Search?mfpn=2473099))
-- ? x Linear potentiometers ("sliders") ([Product on Farnell](http://fr.farnell.com/webapp/wcs/stores/servlet/Search?mfpn=1688411))
-- ? x Cursor for linear potentiometers  ([Product on Farnell](http://fr.farnell.com/webapp/wcs/stores/servlet/Search?mfpn=1440016))
+- ? x On/off switches                        ([Example on Farnell](http://fr.farnell.com/webapp/wcs/stores/servlet/Search?exaMfpn=true&mfpn=9473378))
+- ? x Push-button / keys                     ([Example on Farnell](http://fr.farnell.com/webapp/wcs/stores/servlet/Search?exaMfpn=true&mfpn=2079605))
+- ? x Rotatory potentiometers                ([Product on Farnell](http://fr.farnell.com/webapp/wcs/stores/servlet/Search?exaMfpn=true&mfpn=1760794))
+- ? x Knob for rotatory potentiometers       ([Example on Farnell](http://fr.farnell.com/webapp/wcs/stores/servlet/Search?exaMfpn=true&mfpn=2473099))
+- ? x Linear potentiometers ("sliders")      (Product on Farnell : [45mm](http://fr.farnell.com/webapp/wcs/stores/servlet/Search?exaMfpn=true&mfpn=1688415), [60mm](http://fr.farnell.com/webapp/wcs/stores/servlet/Search?exaMfpn=true&mfpn=1688411))
+- ? x Cursor for linear potentiometers       ([Product on Farnell](http://fr.farnell.com/webapp/wcs/stores/servlet/Search?exaMfpn=true&mfpn=1440016))
+- ? x 100 screws for linear potentiomeneters ([Product on Farnell](http://fr.farnell.com/webapp/wcs/stores/servlet/Search?exaMfpn=true&mfpn=507118))
 
 ### Tools
 
-- Soldering iron (+solder material) ;
-- Stripper ;
+- A good soldering iron (+solder material) ;
+- A stripper ;
 - Some scissors or small cutters to cut wires after soldering ;
 - Ideally, a multimeter - or at least to check there's no short between GND and 5V !
 - A small knife if you need to remove the chip from the support.
 
-### Optional (if you aim to control more than 6 analog entries, i.e. potentiometers) :
+### Optional - Analog multiplexers (if you aim to control more than 6 analog entries) :
 
-- ? x 1-to-8 analog multiplexer         ([Product on Farnell](http://fr.farnell.com/webapp/wcs/stores/servlet/Search?mfpn=1236279))
-- ? x Socket for 16 pin chip            ([Product on Farnell]) Optionnal, but recommended
+These will allow you to map 8 analog inputs to 1 input
+
+- ? x 1-to-8 analog multiplexer         ([Product on Farnell](http://fr.farnell.com/webapp/wcs/stores/servlet/Search?exaMfpn=true&mfpn=1236279))
+- ? x Socket for 16 pin chip            ([Product on Farnell](http://fr.farnell.com/webapp/wcs/stores/servlet/Search?exaMfpn=true&mfpn=2445622)) Optionnal, but recommended
 
 3. Making a USB cable
 ---------------------
+
+The first step is to build ourselves a USB cable. This will be the interface
+between the computer and our MIDI controller, and in particular the Atmega chip.
+
+There are many ways to do this. For instance, you can cut an old USB cable (e.g.
+from a broken USB mouse) to access the wires. You can also just solder a male or 
+female connector directly on the board next to your Atmega, and use a cable like 
+[this](http://fr.farnell.com/productimages/standard/en_US/95W0184-40.jpg).
+Personnally I built a cable using a male USB connector and some wires. Make sure
+you wires are at least ~0.5m long (mines were 20 cm long and it's clearly too short :))
+
+The pinning of the A plug is shown below. It is good practice to use red/black
+for the 5V/GND pins , and white/green for the D-/D+ pins.
 
 ![](./doc/USBpinning.png)
 
@@ -151,7 +186,6 @@ recognized as a USB chip programmer).
 ------------------------------
 
 [MakerCase](http://www.makercase.com/)
-
 
 9. Profit !
 -----------
