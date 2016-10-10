@@ -12,12 +12,12 @@ void setup()
 
     mux1.init();
 
-    pinMode(5,  OUTPUT);
-    pinMode(A5, INPUT);
-
     midiController.initUSB();
     //midiController.mapPinToNote(12,60);
-    midiController.mapPinToControl(&mux1, A5, 1);
+    midiController.mapPinToControl(&mux1, 0, 1);
+    midiController.mapPinToControl(&mux1, 1, 2);
+    midiController.mapPinToControl(&mux1, 2, 3);
+    midiController.mapPinToControl(&mux1, 3, 4);
 
 }
 

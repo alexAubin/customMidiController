@@ -30,7 +30,7 @@ How to build your MIDI Controller ?
 1. General overview
 -------------------
 
-
+![](./hardware/overview.png)
 
 2. Shopping for hardware
 ------------------------
@@ -106,10 +106,40 @@ If the "bootloader switch" is in the other position, the bootloader will launch
 the program you uploaded on the ATMEGA - which can be as simple as blinking a LED,
 or acting as a USB device (mouse, keyboard, MIDI, ...).
 
-Flashing the bootloader have to be done once and for all and require a
-particular setup described below :
+Flashing the bootloader is a sort of egg-and-chicken situation : to flash the
+chip for the first time, you need another chip. This can be done for instance
+using a Arduino UNO board. Fortunately, this is done once and for all, assuming 
+the flashing is succesful ! The bootloader flashing setup is the following :
 
 ![](./doc/bootloaderFlashingSetup.png)
+
+Once this setup is ready, you should flash a particular program "ArduinoISP"
+(in-situ programming) on the Arduino board. It is available in the Arduino IDE
+under File > Examples. Then you need to switch the Programmer in the IDE to
+"Arduino as ISP" (Tools > Programmer > Arduino as ISP).
+
+If we wanted to flash the regular Arduino bootloader, we would now go to Tools >
+Flash bootloader. However, we want to flash our particular V-USB bootloader.
+Therefore, we use the Makefile in this directory to do so :
+
+```
+# Compile
+make bootloader
+# Flash
+make bootloader-flash
+```
+
+Once this is done, you should put back your Atmega on your board and test if it
+worked. To do so, you can set your board in "Bootloader mode ON". In a terminal,
+type :
+
+```
+dmesg -e -w
+```
+
+to display new messages from the kernel. Plug your board in. If it's working,
+you should see some blabbling about a new USB device called USBasp (meaning it's
+recognized as a USB chip programmer).
 
 6. Flashing a dummy Midi Controller firmware
 --------------------------------------------
