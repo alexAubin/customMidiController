@@ -187,6 +187,8 @@ recognized as a USB chip programmer).
 
 [MakerCase](http://www.makercase.com/)
 
+![](./case/case.png)
+
 9. Profit !
 -----------
 
