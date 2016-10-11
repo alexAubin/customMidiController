@@ -8,25 +8,26 @@ functions.
 Features
 --------
 
-- Cheap to build : use directly a standalone Atmega microcontroller (not a whole Arduino board) ;
-- Plug-and-play : detected as an actual MIDI device automatically (no need for intermediate software) ;
-- Easy reprogram through USB : using the proper bootloader and a switch, you enter a mode to reprogram it at will (no need for USB to Serial  / FTDI stuff) ;
-- Use the Arduino library to manage pins with pinMode, digitalRead, analogRead... *Please no crazy batshit using binary operators - who actually wants to code like that, really ?*
-- Easily customizable, extandable.
+- **Cheap to build** : use directly a standalone Atmega microcontroller (not a whole Arduino board) ;
+- **Plug-and-play** : detected as an actual MIDI device automatically (no need for intermediate software) ;
+- **Easy reprogram through USB** : using the proper bootloader and a switch, you enter a mode to reprogram it at will (no need for USB to Serial  / FTDI stuff) ;
+- **Use the Arduino library** to manage pins with pinMode, digitalRead, analogRead... *Please no crazy batshit using binary operators - who actually wants to code like that, really ?*
+- **Easily customizable, extandable**.
 
 How to build your MIDI Controller ?
 -----------------------------------
 
-1. General overview
-2. Shopping for hardware
-3. Making a USB cable
-4. Building the core (standalone Atmega on USB)
-5. Flashing the USBasp/V-USB bootloader
-6. Flashing a dummy Midi Controller firmware
-7. Adding switches and potentiometer
-8. Put all this in a nice case
-9. Profit !
+1. [General overview](#overview)
+2. [Shopping for hardware](#shopping)
+3. [Making a USB cable](#cable)
+4. [Building the core (standalone Atmega on USB)](#core)
+5. [Flashing the USBasp/V-USB bootloader](#bootloader)
+6. [Flashing a dummy Midi Controller firmware](#test)
+7. [Adding switches and potentiometer](#pots)
+8. [Put all this in a nice case](#case)
+9. [Profit !](#profit)
 
+<a name="overview"></a>
 1. General overview
 -------------------
 
@@ -48,53 +49,65 @@ multiplexers to extend the capabilities (8 entries mapped to 1 entry, i.e. up to
 
 ![](./doc/overview.png)
 
+<a name="shopping"></a>
 2. Shopping for hardware
 ------------------------
 
 ### The core
 
-- 1 x Atmega328P-PU                ([Product on Farnell](http://fr.farnell.com/webapp/wcs/stores/servlet/Search?exaMfpn=true&mfpn=1715487)) Careful : need *exactly* the 328**P-PU** version
-- 1 x Socket for 28 pin chip       ([Product on Farnell](http://fr.farnell.com/webapp/wcs/stores/servlet/Search?exaMfpn=true&mfpn=2445626)) Optionnal, but recommended
-- 1 x USB connector                ([Product on Farnell](http://fr.farnell.com/webapp/wcs/stores/servlet/Search?exaMfpn=true&mfpn=1696544)) (or an old USB cable with male plug, to be cut to access the wires)
-- 1 x 12MHz crystal                ([Product on Farnell](http://fr.farnell.com/webapp/wcs/stores/servlet/Search?exaMfpn=true&mfpn=2508453))
-- 2 x 3.6V zener diode             ([Example on Farnell](http://fr.farnell.com/webapp/wcs/stores/servlet/Search?exaMfpn=true&mfpn=1861480))
-- 2 x 22pF ceramic capacitor       ([Example on Farnell](http://fr.farnell.com/webapp/wcs/stores/servlet/Search?exaMfpn=true&mfpn=9411674))
-- 1 x 100nF ceramic capacitor      ([Example on Farnell](http://fr.farnell.com/webapp/wcs/stores/servlet/Search?exaMfpn=true&mfpn=9411887))
-- 1 x 4.7μF electrolytic capacitor ([Example on Farnell](http://fr.farnell.com/webapp/wcs/stores/servlet/Search?exaMfpn=true&mfpn=9451471))
-- 1 x 10~50kΩ resistor             ([Example on Farnell](http://fr.farnell.com/webapp/wcs/stores/servlet/Search?exaMfpn=true&mfpn=2329609))
-- 1 x 1~2kΩ resistor               ([Example on Farnell](http://fr.farnell.com/webapp/wcs/stores/servlet/Search?exaMfpn=true&mfpn=2329629))
-- 2 x 68Ω resistor                 ([Example on Farnell](http://fr.farnell.com/webapp/wcs/stores/servlet/Search?exaMfpn=true&mfpn=2329701))
-- 1 x mini push button switch      ([Example on Farnell](http://fr.farnell.com/webapp/wcs/stores/servlet/Search?exaMfpn=true&mfpn=2468762))
-- 1 x mini toggle switch           ([Example on Farnell](http://fr.farnell.com/webapp/wcs/stores/servlet/Search?exaMfpn=true&mfpn=2320018))
+- 1 × Atmega328P-PU                ([Product on Farnell](http://fr.farnell.com/webapp/wcs/stores/servlet/Search?exaMfpn=true&mfpn=1715487)) Careful : need *exactly* the 328**P-PU** version
+- 1 × Socket for 28 pin chip       ([Product on Farnell](http://fr.farnell.com/webapp/wcs/stores/servlet/Search?exaMfpn=true&mfpn=2445626)) Optionnal, but recommended
+- 1 × USB connector                ([Product on Farnell](http://fr.farnell.com/webapp/wcs/stores/servlet/Search?exaMfpn=true&mfpn=1696544)) (or an old USB cable with male plug, to be cut to access the wires)
+- 1 × 12MHz crystal                ([Product on Farnell](http://fr.farnell.com/webapp/wcs/stores/servlet/Search?exaMfpn=true&mfpn=2508453))
+- 2 × 3.6V zener diode             ([Example on Farnell](http://fr.farnell.com/webapp/wcs/stores/servlet/Search?exaMfpn=true&mfpn=1861480))
+- 2 × 22pF ceramic capacitor       ([Example on Farnell](http://fr.farnell.com/webapp/wcs/stores/servlet/Search?exaMfpn=true&mfpn=9411674))
+- 1 × 100nF ceramic capacitor      ([Example on Farnell](http://fr.farnell.com/webapp/wcs/stores/servlet/Search?exaMfpn=true&mfpn=9411887))
+- 1 × 4.7μF electrolytic capacitor ([Example on Farnell](http://fr.farnell.com/webapp/wcs/stores/servlet/Search?exaMfpn=true&mfpn=9451471))
+- 1 × 10~50kΩ resistor             ([Example on Farnell](http://fr.farnell.com/webapp/wcs/stores/servlet/Search?exaMfpn=true&mfpn=2329609))
+- 1 × 1~2kΩ resistor               ([Example on Farnell](http://fr.farnell.com/webapp/wcs/stores/servlet/Search?exaMfpn=true&mfpn=2329629))
+- 2 × 68Ω resistor                 ([Example on Farnell](http://fr.farnell.com/webapp/wcs/stores/servlet/Search?exaMfpn=true&mfpn=2329701))
+- 1 × mini push button switch      ([Example on Farnell](http://fr.farnell.com/webapp/wcs/stores/servlet/Search?exaMfpn=true&mfpn=2468762))
+- 1 × mini toggle switch           ([Example on Farnell](http://fr.farnell.com/webapp/wcs/stores/servlet/Search?exaMfpn=true&mfpn=2320018))
 
-- Colored wires                    ([Example](http://www.robotshop.com/eu/en/elenco-22-gauge-black-25-ft.html), or any cable you can find. Just don't use fancy jumper wires if you intend to solder !)
-- Single-sided prototyping board   ([Example](http://www.robotshop.com/eu/en/prototyping-board.html)) or a breadboard if you don't want to solder right away
+- Some colored wires such as [this](http://www.robotshop.com/eu/en/elenco-22-gauge-black-25-ft.html), or any wire you can find. Just don't use fancy jumper wires if you intend to solder !
+- Single-sided prototyping board ([example](http://www.robotshop.com/eu/en/prototyping-board.html)), or a breadboard if you don't want to solder right away.
+
+Total should be around 6€, the Atmega chip being the most expensive part.
 
 ### Actual controller stuff
 
-- ? x On/off switches                        ([Example on Farnell](http://fr.farnell.com/webapp/wcs/stores/servlet/Search?exaMfpn=true&mfpn=9473378))
-- ? x Push-button / keys                     ([Example on Farnell](http://fr.farnell.com/webapp/wcs/stores/servlet/Search?exaMfpn=true&mfpn=2079605))
-- ? x Rotatory potentiometers                ([Product on Farnell](http://fr.farnell.com/webapp/wcs/stores/servlet/Search?exaMfpn=true&mfpn=1760794))
-- ? x Knob for rotatory potentiometers       ([Example on Farnell](http://fr.farnell.com/webapp/wcs/stores/servlet/Search?exaMfpn=true&mfpn=2473099))
-- ? x Linear potentiometers ("sliders")      (Product on Farnell : [45mm](http://fr.farnell.com/webapp/wcs/stores/servlet/Search?exaMfpn=true&mfpn=1688415), [60mm](http://fr.farnell.com/webapp/wcs/stores/servlet/Search?exaMfpn=true&mfpn=1688411))
-- ? x Cursor for linear potentiometers       ([Product on Farnell](http://fr.farnell.com/webapp/wcs/stores/servlet/Search?exaMfpn=true&mfpn=1440016))
-- ? x 100 screws for linear potentiomeneters ([Product on Farnell](http://fr.farnell.com/webapp/wcs/stores/servlet/Search?exaMfpn=true&mfpn=507118))
+Feel free to look for other potentiometers and switches ! Just make sure that
+the knobs/caps you take are compatible with the potentiometers you choose. Also
+make sure you know how you plan to fix them on your final box. I'm just showing 
+those I took below. Total for rotatory pots was around 1.5€ each (including the 
+knob). Linear pots were around 2€ each (including the cursor).
+
+- On/off switches                        ([Example on Farnell](http://fr.farnell.com/webapp/wcs/stores/servlet/Search?exaMfpn=true&mfpn=9473378))
+- Push-button / keys                     ([Example on Farnell](http://fr.farnell.com/webapp/wcs/stores/servlet/Search?exaMfpn=true&mfpn=2079605))
+- Rotatory potentiometers                ([Product on Farnell](http://fr.farnell.com/webapp/wcs/stores/servlet/Search?exaMfpn=true&mfpn=1760794))
+- Knob for rotatory potentiometers       ([Example on Farnell](http://fr.farnell.com/webapp/wcs/stores/servlet/Search?exaMfpn=true&mfpn=2473099))
+- Linear potentiometers (sliders/faders) (Product on Farnell : [45mm](http://fr.farnell.com/webapp/wcs/stores/servlet/Search?exaMfpn=true&mfpn=1688415), [60mm](http://fr.farnell.com/webapp/wcs/stores/servlet/Search?exaMfpn=true&mfpn=1688411))
+- Cursor for linear potentiometers       ([Product on Farnell](http://fr.farnell.com/webapp/wcs/stores/servlet/Search?exaMfpn=true&mfpn=1440016))
+- 100 screws for linear potentiomeneters ([Product on Farnell](http://fr.farnell.com/webapp/wcs/stores/servlet/Search?exaMfpn=true&mfpn=507118))
+
+Total for 4 rotatory, 4 linear and 4 push-buttons is around 15~20€.
 
 ### Tools
 
-- A good soldering iron (+solder material) ;
+- A soldering iron (and some solder material) ;
 - A stripper ;
-- Some scissors or small cutters to cut wires after soldering ;
-- Ideally, a multimeter - or at least to check there's no short between GND and 5V !
+- Some scissors or small cutters to cut wire excess after soldering ;
+- Ideally, a multimeter - or anything to at least something to check there's no short between GND and 5V !
 - A small knife if you need to remove the chip from the support.
 
 ### Optional - Analog multiplexers (if you aim to control more than 6 analog entries) :
 
 These will allow you to map 8 analog inputs to 1 input
 
-- ? x 1-to-8 analog multiplexer         ([Product on Farnell](http://fr.farnell.com/webapp/wcs/stores/servlet/Search?exaMfpn=true&mfpn=1236279))
-- ? x Socket for 16 pin chip            ([Product on Farnell](http://fr.farnell.com/webapp/wcs/stores/servlet/Search?exaMfpn=true&mfpn=2445622)) Optionnal, but recommended
+- 1-to-8 analog multiplexer         ([Product on Farnell](http://fr.farnell.com/webapp/wcs/stores/servlet/Search?exaMfpn=true&mfpn=1236279))
+- Socket for 16 pin chip            ([Product on Farnell](http://fr.farnell.com/webapp/wcs/stores/servlet/Search?exaMfpn=true&mfpn=2445622)) Optionnal, but recommended
 
+<a name="cable"></a>
 3. Making a USB cable
 ---------------------
 
@@ -115,10 +128,43 @@ for the 5V/GND pins , and white/green for the D-/D+ pins.
 
 ![](./hardware/usbCableIRL.jpg)
 
+<a name="core"></a>
 4. Building the core (standalone Atmega on USB)
 -----------------------------------------------
 
-![](./doc/Atmega328Pinning.png)
+The core of the controller is heavily based on the [USnooBie kit](http://eleccelerator.com/usnoobie/index.php).
+The design of the kit allows a Atmega to communicate and be reprogrammed
+directly through USB, and, if you want to, to be recognized as an actual USB 
+device of your choice. It's also relatively cheap (you may build one for 5-6€).
+On the other hand, it doesn't give you an easy access to i/o pins like the
+Arduino does with its headers numbered 1 to 13. I also don't know yet how to
+get an equivalent of the Serial library for debugging purposes.
+
+The design is centered on an Atmega328P-PU, and a few parts to ensure good 
+operation of the chip and working USB communication. Here are the major stuff :
+
+- Capacitors to mitigate fluctuation on the power supply (5V / GND) ;
+- 12 MHz crystal (and two 22pF friends) as an external clock for the chip ;
+- 3.6V zener diodes and a few resistors for the USB data lines to work properly ;
+- A reset switch to reboot the Atmega when needed ;
+- A bootloader switch to choose between bootloader/reprogram mode, or "use current program" mode ;
+- (Optionnal) A led to show the board is powered on.
+
+More details on the role of each components can be found on the 
+[USnooBie assembly page](http://eleccelerator.com/usnoobie/assembly.php).
+You might also be interested in keeping the [Atmega pin map](./doc/Atmega328Pinning.png) 
+around, it's always handy at some point.
+
+PLEASE NOTE that I did not include any protection in my design. It's essentially
+because the board is not meant to have any 9V around that could inadvertently
+damage the USB ports it's plugged in. There's still a risk of short between GND
+and 5V on your board. However I found out from experience that my laptop's USB 
+ports were not damaged because of such shorts - the kernel was just unhappy for
+a few minutes, then it was working again.
+
+It's a good practice, though, to check after any change in the board, that
+there's at least no short between 5V and GND before plugging the controller back
+in your laptop.
 
 ![](./hardware/schematic.png)
 
@@ -126,19 +172,20 @@ for the 5V/GND pins , and white/green for the D-/D+ pins.
 
 ![](./hardware/boardIRL.jpg)
 
+<a name="bootloader"></a>
 5. Flashing the USBasp/V-USB bootloader
 ---------------------------------------
 
-For the ATMEGA to be able to communicate directly through the USB (allowing it
+For the Atmega to be able to communicate directly through the USB (allowing it
 to be recognized as a USB device and to reprogram it at will), we use a custom
 bootloader from V-USB. The bootloader is the small piece of software, pretty
 similar to the BIOS in computer, which initiates the rest of the software meant
 to be run. 
 
-In our case, if the "bootloader switch" is activated when the ATMEGA boot, it will
+In our case, if the "bootloader switch" is activated when the Atmega boot, it will
 emulate a "USBasp" programmer and you'll be able to upload to change the program. 
 If the "bootloader switch" is in the other position, the bootloader will launch
-the program you uploaded on the ATMEGA - which can be as simple as blinking a LED,
+the program you uploaded on the Atmega - which can be as simple as blinking a LED,
 or acting as a USB device (mouse, keyboard, MIDI, ...).
 
 Flashing the bootloader is a sort of egg-and-chicken situation : to flash the
@@ -176,12 +223,15 @@ to display new messages from the kernel. Plug your board in. If it's working,
 you should see some blabbling about a new USB device called USBasp (meaning it's
 recognized as a USB chip programmer).
 
+<a name="test"></a>
 6. Flashing a dummy Midi Controller firmware
 --------------------------------------------
 
+<a name="pots"></a>
 7. Adding switches and potentiometers
 -------------------------------------
 
+<a name="case"></a>
 8. Put all this in a nice case
 ------------------------------
 
@@ -189,6 +239,7 @@ recognized as a USB chip programmer).
 
 ![](./case/case.png)
 
+<a name="profit"></a>
 9. Profit !
 -----------
 
