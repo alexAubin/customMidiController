@@ -276,6 +276,7 @@ int MIDIController::initUSB()
 
 void MIDIController::mapPinToNote(int pinNumber, char noteValue)
 {
+    pinMode(pinNumber, INPUT);
     initElement(pinNumber, NOTE, noteValue);
 };
 
@@ -286,6 +287,7 @@ void MIDIController::mapPinToNote(Multiplexer* mux, int pinNumber, char noteValu
 
 void MIDIController::mapPinToControl(int pinNumber, char controlId)
 {
+    pinMode(pinNumber, INPUT);
     initElement(pinNumber, CONTROL, controlId);
 };
 

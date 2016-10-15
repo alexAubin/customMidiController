@@ -103,11 +103,13 @@ endif
 # Targets
 ###############################################################################
 
-.PHONY:	default hex upload clean bootloader bootloader-flash
+.PHONY:	default everything all hex upload clean bootloader bootloader-flash
 
 default: hex
 
 everything: clean hex upload
+
+all: everything
 
 hex: $(TARGET).hex
 

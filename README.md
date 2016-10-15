@@ -22,10 +22,11 @@ How to build your MIDI Controller ?
 3. [Making a USB cable](#cable)
 4. [Building the core (standalone Atmega on USB)](#core)
 5. [Flashing the USBasp/V-USB bootloader](#bootloader)
-6. [Flashing a dummy Midi Controller firmware](#test)
+6. [Testing with a simple Midi Controller firmware](#test)
 7. [Adding switches and potentiometer](#pots)
-8. [Put all this in a nice case](#case)
-9. [Profit !](#profit)
+8. [(Optionnal) Add multiplexers](#mux)
+9. [Put all this in a nice case](#case)
+10. [Profit !](#profit)
 
 <a name="overview"></a>
 1. General overview
@@ -164,7 +165,13 @@ a few minutes, then it was working again.
 
 It's a good practice, though, to check after any change in the board, that
 there's at least no short between 5V and GND before plugging the controller back
-in your laptop.
+in your laptop. You can do that with the "beep mode" of a multimeter. Ideally, 
+you should also check for instance that the total resistance between, e.g. the 
+D+ and D- pins, directly on the back of the USB connector, and the corresponding 
+pins on the chip socket, is around 68Ω (I had 65, good enough). More generally, 
+you can do some continuity checks (the "beep" thing) between the various component 
+legs and pins  that should be connected together, to remove suspicions about 
+solders being bad and so on.
 
 ![](./hardware/schematic.png)
 
@@ -224,15 +231,90 @@ you should see some blabbling about a new USB device called USBasp (meaning it's
 recognized as a USB chip programmer).
 
 <a name="test"></a>
-6. Flashing a dummy Midi Controller firmware
+6. Testing with a simple Midi Controller firmware
 --------------------------------------------
+
+Now you might want to flash a simple / test firmware to see your device being a
+MIDI controller. To do so, you might want to add a small switch for instance on
+pin 13 of your Atmega (the other pin of the switch goes to GND). You might want
+to add a pull-up resistor (something between 10k and 50k should do the trick)
+between pin 13 and VCC (see 'Switches' in next section).
+
+Then, edit the `setup()` and `loop()` of the `main.cpp` to something like this :
+
+```
+void setup()
+{
+    midiController.initUSB();
+    midiController.mapPinToNote(13, 60);
+}
+
+void loop()
+{
+    midiController.update();
+    delay(10);
+}
+```
+
+In this example, we map what's on pin 13 to the note 60 ("Middle C", or C5 in 
+music notation). (The full map of MIDI notes can be found for instance
+[here](http://www.electronics.dit.ie/staff/tscarff/Music_technology/midi/midi_note_numbers_for_octaves.htm)).
+
+Compile the code using `make hex`, then upload it using `make upload` ! If
+compiling and uploading worked, you can flip the bootloader switch to the other
+position, such that the device now use the program you just flashed. Reboot or
+replug the board. In `dmesg -e -w`, you should now see the board being
+recognized as some sort of 'CustomMidiController'. Try `amidi -l` to confirm
+that the OS correctly sees it as a MIDI controller. Then try `amidi -p hw:1,0,0
+-d` to listen to incoming MIDI signals. Now if you press the switch on pin 13,
+it should emit a MIDI signal that you can see on your computer.
 
 <a name="pots"></a>
 7. Adding switches and potentiometers
 -------------------------------------
 
+Next step is to add as many switches and potentiometers as you'd like (modulo
+the fact that you'll need multiplexing if you want more than 6 potentiometers).
+Each time you add a new element, you should a corresponding line in your
+`setup()` in `main.cpp` :
+
+```C++
+# For a 'key' 
+# SOME_NOTE_NUMBER designates the music note you want
+midiController.mapPinToNote(SOME_PIN_NUMBER, SOME_NOTE_NUMBER);
+# For a control (knobs / faders).
+# SOME_CONTROL_NUMBER is just an identifier you choose, starting at 0
+midiController.mapPinToControl(SOME_OTHER_PIN_NUMBER, SOME_CONTROL_NUMBER);
+```
+
+### Linear potentiometer ([datasheet](http://www.farnell.com/datasheets/1874874.pdf))
+
+Look for the « 1 », « 2 » and « 3 » numbers near the pins of the potentiometer.
+
+- Pin 1 goes to 5V ;
+- Pin 2 (the signal) goes to the analog input of your choice ;
+- Pin 3 goes to GND.
+
+### Rotatory potentiometer ([datasheet](http://www.farnell.com/datasheets/90780.pdf))
+
+The pin mapping is the following :
+
+![](./doc/pinsRotatoryPot.png)
+
+### Switches
+
+For the switches (any types), you'll probably need to add a pull-up resistor,
+which yields a schematic like this :
+
+![](./doc/pinsSwitches.png)
+
+
+<a name="mux"></a>
+8. (Optionnal) Add multiplexers
+-------------------------------
+
 <a name="case"></a>
-8. Put all this in a nice case
+9. Put all this in a nice case
 ------------------------------
 
 [MakerCase](http://www.makercase.com/)
@@ -240,7 +322,7 @@ recognized as a USB chip programmer).
 ![](./case/case.png)
 
 <a name="profit"></a>
-9. Profit !
+10. Profit !
 -----------
 
 References, inspiration, credits, links
