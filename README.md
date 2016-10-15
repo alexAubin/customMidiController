@@ -279,11 +279,11 @@ Each time you add a new element, you should a corresponding line in your
 `setup()` in `main.cpp` :
 
 ```C++
-# For a 'key' 
-# SOME_NOTE_NUMBER designates the music note you want
+// For a 'key' 
+// SOME_NOTE_NUMBER designates the music note you want
 midiController.mapPinToNote(SOME_PIN_NUMBER, SOME_NOTE_NUMBER);
-# For a control (knobs / faders).
-# SOME_CONTROL_NUMBER is just an identifier you choose, starting at 0
+// For a control (knobs / faders).
+// SOME_CONTROL_NUMBER is just an identifier you choose, starting at 0
 midiController.mapPinToControl(SOME_OTHER_PIN_NUMBER, SOME_CONTROL_NUMBER);
 ```
 
