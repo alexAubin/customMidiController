@@ -5,6 +5,8 @@ Code and instructions to easily build a MIDI Controller from scratch using a
 standalone Atmega328P-PU, but still use the Arduino library for the convenient 
 functions.
 
+![](./doc/box.jpg)
+
 Features
 --------
 
@@ -320,6 +322,8 @@ which yields a schematic like this :
 [MakerCase](http://www.makercase.com/)
 
 ![](./case/case.png)
+
+![](./doc/box.jpg)
 
 <a name="profit"></a>
 10. Profit !
