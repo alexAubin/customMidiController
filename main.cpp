@@ -32,10 +32,6 @@ void loop()
 
     delay(10);
 
-    //analogWrite(5, analogRead(5) / 4);
-
-    //digitalWrite(5, HIGH);
-
 }
 
 

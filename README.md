@@ -325,6 +325,16 @@ which yields a schematic like this :
 10. Profit !
 -----------
 
+Programming using the Arduino IDE
+---------------------------------
+
+Haven't tested this already !
+
+Instructions are available on this [USnooBie kit page](http://eleccelerator.com/usnoobie/arduino.php), 
+regarding how to program the core board with the Arduino IDE. In the context of
+this MIDI Controller, you will also need to include the MIDI USB lib thing
+somehow.
+
 References, inspiration, credits, links
 ---------------------------------------
 
