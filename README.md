@@ -158,6 +158,15 @@ More details on the role of each components can be found on the
 You might also be interested in keeping the [Atmega pin map](./doc/pinsAtmega328.png) 
 around, it's always handy at some point.
 
+I suggest this order when soldering :
+1. The socket for the chip, around the middle of your board ;
+2. The crystal and the two 22pF capacitors ;
+3. The 100 nF capacitor, near the crystal ;
+4. The two 68Ω and zener diodes for D+/D- ;
+5. The switches and pull-up resistors ;
+6. The 4.7μF capacitor ;
+7. The USB cable (and other wires) ;
+
 PLEASE NOTE that I did not include any protection in my design. It's essentially
 because the board is not meant to have any 9V around that could inadvertently
 damage the USB ports it's plugged in. There's still a risk of short between GND
@@ -213,7 +222,7 @@ If we wanted to flash the regular Arduino bootloader, we would now go to Tools >
 Flash bootloader. However, we want to flash our particular V-USB bootloader.
 Therefore, we use the Makefile in this directory to do so :
 
-```
+```bash
 # Compile
 make bootloader
 # Flash
@@ -244,7 +253,7 @@ between pin 13 and VCC (see 'Switches' in next section).
 
 Then, edit the `setup()` and `loop()` of the `main.cpp` to something like this :
 
-```
+```C++
 void setup()
 {
     midiController.initUSB();
@@ -319,7 +328,10 @@ which yields a schematic like this :
 9. Put all this in a nice case
 ------------------------------
 
-[MakerCase](http://www.makercase.com/)
+I used the website [MakerCase](http://www.makercase.com/) to automatically
+generate the basis of my box/case. I then added other rectangles and circles to
+be able to mount my potentiometers and switches. The relevant dimensions are
+given in the datasheets of the potentiometers.
 
 ![](./case/case.png)
 
