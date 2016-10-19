@@ -5,7 +5,7 @@ Code and instructions to easily build a MIDI Controller from scratch using a
 standalone Atmega328P-PU, but still use the Arduino library for the convenient 
 functions.
 
-![](./doc/box.jpg)
+![](./doc/result.jpg)
 
 Features
 --------
@@ -127,7 +127,7 @@ you wires are at least ~0.5m long (mines were 20 cm long and it's clearly too sh
 The pinning of the A plug is shown below. It is good practice to use red/black
 for the 5V/GND pins , and white/green for the D-/D+ pins.
 
-![](./doc/USBpinning.png)
+![](./doc/pinsUSB.png)
 
 ![](./hardware/usbCableIRL.jpg)
 
@@ -155,7 +155,7 @@ operation of the chip and working USB communication. Here are the major stuff :
 
 More details on the role of each components can be found on the 
 [USnooBie assembly page](http://eleccelerator.com/usnoobie/assembly.php).
-You might also be interested in keeping the [Atmega pin map](./doc/Atmega328Pinning.png) 
+You might also be interested in keeping the [Atmega pin map](./doc/pinsAtmega328.png) 
 around, it's always handy at some point.
 
 PLEASE NOTE that I did not include any protection in my design. It's essentially
@@ -323,11 +323,13 @@ which yields a schematic like this :
 
 ![](./case/case.png)
 
-![](./doc/box.jpg)
+![](./doc/emptyBox.jpg)
 
 <a name="profit"></a>
 10. Profit !
 -----------
+
+![](./doc/result.jpg)
 
 Programming using the Arduino IDE
 ---------------------------------
